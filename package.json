@@ -1,0 +1,15 @@
+{
+  "name": "gigsarthi",
+  "version": "1.0.0",
+  "description": "GigSarthi - AI Assistant for Gig Workers (Hackathon Prototype)",
+  "scripts": {
+    "dev": "concurrently --names \"AI,BACKEND,FRONTEND\" --prefix-colors \"magenta,cyan,yellow\" \"npm run dev:ai\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:ai": "cd ai-engine && python -m uvicorn main:app --reload --port 8000",
+    "dev:backend": "cd backend && node --watch server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install && cd ../ai-engine && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
