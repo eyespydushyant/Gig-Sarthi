@@ -10,6 +10,8 @@ import { InsightCard } from "@/components/features/InsightCard";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, TrendingUp, Clock, CloudSun, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { QUICK_CITIES } from "@/constants/cities";
+import { IncomeHeatmap } from "@/components/features/IncomeHeatmap";
 
 export default function Dashboard() {
   const { dashboardData, dashboardLoading, error, fetchDashboardData } = useGigSarthiLive();
@@ -48,6 +50,26 @@ export default function Dashboard() {
       {/* Blue mesh background */}
       <div className="fixed inset-0 min-h-screen w-full -z-10 bg-mesh-blue pointer-events-none" />
 
+      {/* City Quick Switch Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-4">
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-muted-foreground uppercase tracking-widest mr-2">Switch City:</span>
+          {QUICK_CITIES.map((c) => (
+            <button
+              key={c}
+              onClick={() => fetchDashboardData(c, urlHours)}
+              disabled={dashboardLoading}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200
+                ${ (dashboardData?.city || urlCity).toLowerCase() === c.toLowerCase()
+                  ? "bg-primary text-primary-foreground border-primary shadow-[0_0_10px_rgba(14,165,233,0.4)]"
+                  : "bg-background/40 text-muted-foreground border-white/10 hover:border-primary/50 hover:text-primary"
+                }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
       {dashboardLoading ? (
         <div className="flex w-full h-[60vh] items-center justify-center">
           <div className="flex flex-col items-center gap-4">
@@ -149,6 +171,13 @@ export default function Dashboard() {
              </ul>
           </div>
         </DashboardGrid>
+      )}
+
+      {/* Income Heatmap — full width below main grid */}
+      {!dashboardLoading && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <IncomeHeatmap city={dashboardData?.city || urlCity} />
+        </div>
       )}
     </main>
   );

@@ -288,6 +288,44 @@ app.get("/api/dashboard", async (req, res) => {
 });
 
 // ============================================
+// GET /api/earnings-history — 365-day income heatmap data
+// ============================================
+app.get("/api/earnings-history", (req, res) => {
+  const city = (req.query.city || "Delhi").toLowerCase();
+  const CITY_BASE_RATES = {
+    delhi: 140, mumbai: 160, bangalore: 150, hyderabad: 130, chennai: 125,
+    kolkata: 120, pune: 135, jaipur: 115, ahmedabad: 120, lucknow: 110,
+    surat: 118, bhopal: 108, nagpur: 112, indore: 115, vadodara: 118,
+    chandigarh: 125, coimbatore: 115, kochi: 130, visakhapatnam: 118,
+    patna: 100, agra: 108, nashik: 115, rajkot: 110, meerut: 105, faridabad: 118,
+  };
+  const baseRate = CITY_BASE_RATES[city] || 130;
+  const history = [];
+  const today = new Date();
+
+  for (let i = 364; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dayOfWeek = d.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const weekendBoost = isWeekend ? 1.2 : 1.0;
+    // Add realistic daily variance
+    const variance = 0.7 + Math.random() * 0.7;
+    const earnings = Math.round(baseRate * 8 * weekendBoost * variance);
+    const level =
+      earnings < baseRate * 6 ? "low"
+      : earnings > baseRate * 9.5 ? "high"
+      : "medium";
+    history.push({
+      date: d.toISOString().split("T")[0],
+      earnings,
+      level,
+    });
+  }
+  res.json({ city, history });
+});
+
+// ============================================
 // START SERVER
 // ============================================
 app.listen(PORT, () => {

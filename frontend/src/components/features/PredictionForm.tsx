@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { QUICK_CITIES } from "@/constants/cities";
 
 interface PredictionFormProps {
   city: string;
@@ -11,7 +13,6 @@ interface PredictionFormProps {
   loadingApi: string | null;
 }
 
-import { useRouter } from "next/navigation";
 
 export function PredictionForm({
   city,
@@ -27,10 +28,33 @@ export function PredictionForm({
     if (!city) return;
     router.push(`/dashboard?city=${encodeURIComponent(city)}&hours=${encodeURIComponent(hoursWorked || "8")}`);
   };
+
   return (
     <Card className="glass-panel border-primary/20 shadow-2xl relative overflow-hidden max-w-2xl mx-auto text-left">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
       <CardContent className="p-8 relative z-10 grid gap-6">
+
+        {/* Quick City Chips */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Quick Select City</label>
+          <div className="flex flex-wrap gap-2">
+            {QUICK_CITIES.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCity(c)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200
+                  ${city === c
+                    ? "bg-primary text-primary-foreground border-primary shadow-[0_0_10px_rgba(14,165,233,0.4)]"
+                    : "bg-background/40 text-muted-foreground border-white/10 hover:border-primary/50 hover:text-primary"
+                  }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground/80">City</label>
@@ -56,6 +80,7 @@ export function PredictionForm({
           </div>
         </div>
 
+        {/* Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
           <Button
             onClick={handlePredictRoute}
@@ -63,14 +88,6 @@ export function PredictionForm({
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_25px_rgba(14,165,233,0.5)] transition-all col-span-1 md:col-span-2 py-6 text-lg"
           >
             Launch Dashboard
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={loadingApi !== null}
-            loading={loadingApi === "time"}
-            className="hidden w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] transition-all"
-          >
-            Best Time
           </Button>
           <Button
             variant="outline"

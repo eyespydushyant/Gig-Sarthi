@@ -1,86 +1,118 @@
 # GigSarthi – AI Assistant for Gig Workers
 
-GigSarthi is a comprehensive, AI-powered platform designed to empower gig economy workers (delivery partners, ride-share drivers) in India. By predicting daily earnings, recommending optimal work hours, and broadcasting real-time demand alerts, GigSarthi allows workers to systematically maximize their income.
+GigSarthi is a comprehensive, AI-powered platform designed to empower gig economy workers (delivery partners, ride-share drivers) in India. By predicting daily earnings, recommending optimal work hours, broadcasting real-time demand alerts, and providing safety, insurance, and planning tools — GigSarthi helps workers systematically maximize their income and wellbeing.
 
 ## 🚀 Features
 
-*   **Income Prediction:** Forecasts potential earnings based on city dynamics, upcoming weather, traffic conditions, and local holidays.
-*   **Best Work Window:** Offers smart, AI-driven recommendations on the best 3-hour blocks to maximize earnings.
-*   **Live Demand Gauge:** Real-time 1-10 demand scoring system based on local logistics events.
-*   **Analytics Dashboard:** A premium, "Stitch-designed" glassmorphism dashboard featuring responsive charts (recharts) and modern UI elements.
+### Core AI Predictions
+- **Income Prediction**: Forecasts potential earnings based on city, hours worked, weather, traffic, and holidays.
+- **Best Work Window**: AI-recommended 3-hour peak demand blocks per city.
+- **Live Demand Gauge**: Real-time 1–10 demand scoring based on local logistics events.
+
+### Analytics Dashboard
+- **City Quick-Select**: One-click chip buttons to instantly switch between 25+ major Indian cities.
+- **Weather Impact Card**: Live temperature and conditions from WeatherAPI.com.
+- **7-Day Earnings Trend**: Recharts bar chart with city-specific revenue forecasts.
+- **Demand Gauge**: SVG-animated circular gauge with color-coded demand levels.
+- **Sarthi Tips**: AI-generated actionable insights for maximizing earnings.
+
+### Income Heatmap *(Upcoming)*
+- A GitHub contribution-style 52×7 grid heatmap showing historical income intensity (Low/Med/High) for the selected city.
+
+### Emergency SOS Section *(Upcoming)*
+- One-tap SOS button for reporting safety incidents.
+- Incident type selector: Accident, Harassment, Medical, Theft.
+- National helpline numbers (Police: 100, Ambulance: 112, Women: 1091).
+
+### Health Insurance Guide *(Upcoming)*
+- Curated government scheme cards: PM-JAY, ESIC, PMSBY, PMJJBY.
+- Eligibility calculator based on monthly income.
+- Direct links to official government portals.
+
+### Shift Planner & Task Manager *(Upcoming)*
+- Monthly calendar view for scheduling shifts.
+- AI-estimated earnings preview per planned shift.
+- Kanban-style task board: Pre-shift, Maintenance, Financial.
+- Full `localStorage` persistence.
+
+---
 
 ## 🏗️ Architecture Stack
 
-GigSarthi uses a full-stack, decoupled architecture:
-
-*   **Frontend (/frontend):** Next.js 14, React, Tailwind CSS, shadcn/ui.
-*   **Backend Node API (/backend):** Express.js orchestrator that centralizes secure third-party API calls (Weather, Holidays).
-*   **AI Engine (/ai-engine):** Python FastAPI service that processes logistics algorithms and evaluates real-time data to generate predictions.
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 14, React, TypeScript, Tailwind CSS, shadcn/ui |
+| **Backend API** | Node.js + Express (orchestrates external API calls) |
+| **AI Engine** | Python + FastAPI (rule-based prediction engine) |
+| **Weather** | WeatherAPI.com (live temp, condition, humidity) |
+| **Holidays** | Calendarific API (live Indian holiday detection) |
+| **Charts** | Recharts |
+| **Animations** | Framer Motion |
 
 ---
 
 ## ⚙️ Prerequisites
 
-Before you begin, ensure you have the following installed on your machine:
-*   [Node.js](https://nodejs.org/en) (v18+)
-*   [Python](https://www.python.org/) (v3.10+)
-*   A package manager like `npm` or `yarn`
+- [Node.js](https://nodejs.org/en) v18+
+- [Python](https://www.python.org/) v3.10+
+- npm or yarn
+
+---
 
 ## 🛠️ Local Development Setup
 
-To get all three services running concurrently on your local machine:
-
 ### 1. Configure Environment Variables
-You will need API keys for real-time weather and holiday mapping.
 
-Create a `.env` file inside the `/backend` directory:
-```bash
-cd backend
-touch .env
-```
-Paste the following into your new `backend/.env` file:
+Create a `backend/.env` file:
 ```ini
 PORT=5000
 AI_ENGINE_URL=http://localhost:8000
-CALENDARIFIC_API_KEY=your_calendarific_key_here
 WEATHER_API_KEY=your_weatherapi_key_here
+CALENDARIFIC_API_KEY=your_calendarific_key_here
 ```
 
+Get your API keys from:
+- **WeatherAPI.com**: https://www.weatherapi.com/
+- **Calendarific**: https://calendarific.com/
+
 ### 2. Install Dependencies
-Run the install command from the **root directory**. This will install the `concurrently` package, and recursively install dependencies for both the frontend and backend.
+
+From the **root directory**:
 ```bash
 npm install
 ```
 
-*(Optional: If the root install doesn't cascade cleanly, you may manually cd into `/frontend` and `/backend` and run `npm install` in each).*
-
-For the Python AI Engine, make sure you install its dependencies:
+For the Python AI Engine:
 ```bash
 cd ai-engine
 pip install -r requirements.txt
 ```
 
-### 3. Run the Platform
-From the root directory, simply run:
+### 3. Run All Services
+
+From the root directory:
 ```bash
 npm run dev
 ```
 
-This single command utilizes `concurrently` to spin up:
-1.  **Frontend Next.js App** at `http://localhost:3000`
-2.  **Node Express Server** at `http://localhost:5000`
-3.  **Python FastAPI Engine** at `http://localhost:8000`
+This starts all three services concurrently:
+| Service | URL |
+|---|---|
+| **Frontend** | http://localhost:3000 |
+| **Backend API** | http://localhost:5000 |
+| **AI Engine** | http://localhost:8000 |
 
 ---
 
-## 🎨 UI & Theming
+## 🌆 Supported Cities
 
-The frontend was recently migrated to a premium **Blue/Cyan Glassmorphism Theme** based on Google's Stitch design tool.
-All components reside in `frontend/src/components` and use a decoupled hook `useGigSarthiLive` for all API interactions.
+Delhi, Mumbai, Bangalore, Hyderabad, Chennai, Pune, Kolkata, Jaipur, Ahmedabad, Lucknow, Surat, Bhopal, Nagpur, Indore, Vadodara, Chandigarh, Coimbatore, Kochi, Visakhapatnam, Patna, and more.
 
-## 🔒 Security Notes
-*   **Do not commit `.env` files.** The `.gitignore` at the root of the repository ensures that `.env` keys are never pushed to version control.
-*   Review `.env.example` (if applicable) for the keys needed.
+## 🔒 Security
+
+- **Never commit `.env` files** — the `.gitignore` protects all key files.
+- See `.env.example` for the required variable names.
 
 ## 🤝 Contributing
-Feel free to open issues or submit PRs if you want to extend GigSarthi's AI models or frontend dashboard!
+
+Open an issue or submit a pull request to help extend GigSarthi's features!

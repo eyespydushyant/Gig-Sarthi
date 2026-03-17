@@ -31,6 +31,21 @@ CITY_BASE_RATES = {
     "jaipur": 115,
     "ahmedabad": 120,
     "lucknow": 110,
+    "surat": 118,
+    "bhopal": 108,
+    "nagpur": 112,
+    "indore": 115,
+    "vadodara": 118,
+    "chandigarh": 125,
+    "coimbatore": 115,
+    "kochi": 130,
+    "visakhapatnam": 118,
+    "patna": 100,
+    "agra": 108,
+    "nashik": 115,
+    "rajkot": 110,
+    "meerut": 105,
+    "faridabad": 118,
 }
 DEFAULT_BASE_RATE = 130
 
