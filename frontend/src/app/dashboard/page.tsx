@@ -12,6 +12,7 @@ import { RefreshCw, TrendingUp, Clock, CloudSun, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { QUICK_CITIES } from "@/constants/cities";
 import { IncomeHeatmap } from "@/components/features/IncomeHeatmap";
+import { IncomeTargetTracker } from "@/components/features/IncomeTargetTracker";
 
 export default function Dashboard() {
   const { dashboardData, dashboardLoading, error, fetchDashboardData } = useGigSarthiLive();
@@ -116,8 +117,8 @@ export default function Dashboard() {
              <DemandGauge score={demandScore} level={demandLevel as any} explanation={dashboardData?.reason} />
           </div>
 
-          {/* Bottom Row: Charts & Tips */}
-          <div className="md:col-span-3 h-[400px] glass-panel rounded-xl border-white/10 p-6 flex flex-col">
+          {/* Bottom Row: Charts & Target */}
+          <div className="md:col-span-2 h-[410px] glass-panel rounded-xl border-white/10 p-6 flex flex-col">
             <h3 className="text-lg font-medium text-foreground mb-6">7-Day Earnings Trend</h3>
             <div className="flex-1 w-full relative">
               <ResponsiveContainer width="100%" height="100%">
@@ -156,19 +157,22 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           </div>
-
-          {/* AI Tips Panel */}
-          <div className="md:col-span-1 glass-panel rounded-xl border-white/10 p-6 flex flex-col bg-gradient-to-b from-primary/10 to-transparent">
-             <h3 className="text-lg font-medium text-primary mb-4 flex items-center gap-2">
-               ✨ Sarthi Tips
-             </h3>
-             <ul className="space-y-4">
-                {dashboardData?.tips?.map((tip: string, i: number) => (
-                  <li key={i} className="text-sm text-muted-foreground/90 flex items-start gap-2 border-b border-primary/10 pb-3 last:border-0">
-                    <span className="text-primary mt-0.5">•</span> {tip}
-                  </li>
-                ))}
-             </ul>
+          
+          <div className="md:col-span-1 flex flex-col gap-6">
+            <IncomeTargetTracker />
+            {/* AI Tips Panel */}
+            <div className="flex-1 glass-panel rounded-xl border-white/10 p-6 flex flex-col bg-gradient-to-b from-primary/10 to-transparent">
+               <h3 className="text-lg font-medium text-primary mb-4 flex items-center gap-2">
+                 ✨ Sarthi Tips
+               </h3>
+               <ul className="space-y-4">
+                  {dashboardData?.tips?.map((tip: string, i: number) => (
+                    <li key={i} className="text-sm text-muted-foreground/90 flex items-start gap-2 border-b border-primary/10 pb-3 last:border-0">
+                      <span className="text-primary mt-0.5">•</span> {tip}
+                    </li>
+                  ))}
+               </ul>
+            </div>
           </div>
         </DashboardGrid>
       )}
