@@ -10,14 +10,16 @@ GigSarthi is a comprehensive, AI-powered platform designed to empower gig econom
 - **Live Demand Gauge**: Real-time 1–10 demand scoring based on local logistics events.
 
 ### Analytics Dashboard
+- **Income Target Tracker**: Set weekly or monthly earnings goals and track your progress and required daily run-rate dynamically.
 - **City Quick-Select**: One-click chip buttons to instantly switch between 25+ major Indian cities.
+- **Income Heatmap**: A GitHub contribution-style 52×7 grid heatmap showing historical income intensity (Low/Med/High) with hover tooltips for daily estimates.
 - **Weather Impact Card**: Live temperature and conditions from WeatherAPI.com.
 - **7-Day Earnings Trend**: Recharts bar chart with city-specific revenue forecasts.
 - **Demand Gauge**: SVG-animated circular gauge with color-coded demand levels.
 - **Sarthi Tips**: AI-generated actionable insights for maximizing earnings.
 
-### Income Heatmap *(Upcoming)*
-- A GitHub contribution-style 52×7 grid heatmap showing historical income intensity (Low/Med/High) for the selected city.
+### Live Notifications Panel
+- Global slide-in panel that delivers timely health alerts (e.g., hydration reminders, break suggestions) to keep gig workers safe and focused.
 
 ### Emergency SOS Section *(Upcoming)*
 - One-tap SOS button for reporting safety incidents.
