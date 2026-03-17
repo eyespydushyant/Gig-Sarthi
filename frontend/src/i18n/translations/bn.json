@@ -1,0 +1,34 @@
+{
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "save": "সংরক্ষণ করুন",
+    "cancel": "বাতিল",
+    "submit": "জমা দিন",
+    "close": "বন্ধ করুন",
+    "back": "পিছনে",
+    "next": "পরবর্তী",
+    "search": "অনুসন্ধান",
+    "noData": "কোনো তথ্য নেই",
+    "error": "কিছু ভুল হয়েছে",
+    "retry": "আবার চেষ্টা করুন",
+    "hours": "ঘণ্টা",
+    "days": "দিন",
+    "weekly": "সাপ্তাহিক",
+    "monthly": "মাসিক",
+    "daily": "দৈনিক"
+  },
+  "langPopup": {
+    "title": "আপনার ভাষা নির্বাচন করুন",
+    "subtitle": "GigSarthi ব্যবহার করতে আপনার পছন্দের ভাষা নির্বাচন করুন",
+    "continueIn": "বাংলায় চালিয়ে যান"
+  },
+  "navbar": { "home": "হোম", "dashboard": "ড্যাশবোর্ড", "planner": "প্ল্যানার", "insurance": "বীমা", "sos": "SOS", "emergencySos": "জরুরি SOS", "liveAi": "লাইভ AI" },
+  "home": { "title": "আপনার AI-চালিত গিগ সহকারী", "subtitle": "আয়ের পূর্বাভাস পান, পিক সময় খুঁজুন এবং লাইভ চাহিদা সতর্কতা পান।", "predictIncome": "আয়ের পূর্বাভাস", "bestTime": "সেরা সময়", "demandAlert": "চাহিদা সতর্কতা", "cityLabel": "শহর নির্বাচন করুন", "hoursLabel": "কাজের ঘণ্টা", "goToDashboard": "ড্যাশবোর্ডে যান", "quickCities": "দ্রুত শহর নির্বাচন" },
+  "dashboard": { "title": "বিশ্লেষণ ড্যাশবোর্ড", "earningsTrend": "৭-দিনের আয়ের প্রবণতা", "predictedEarnings": "পূর্বাভাসিত আয়", "bestWorkTime": "সেরা কাজের সময়", "weatherImpact": "আবহাওয়ার প্রভাব", "demandLevel": "চাহিদার স্তর", "incomeTarget": "আয় লক্ষ্য", "sarthiTips": "সারথী টিপস", "refresh": "রিফ্রেশ", "loadingDashboard": "আপনার ড্যাশবোর্ড লোড হচ্ছে...", "errorTitle": "ড্যাশবোর্ড লোড করতে ত্রুটি" },
+  "heatmap": { "title": "আয়ের তীব্রতা — গত বছর", "subtitle": "দৈনিক আনুমানিক আয়ের হিটম্যাপ", "noData": "তথ্য নেই", "low": "কম", "medium": "মাঝারি", "high": "উচ্চ", "estEarnings": "আনুমানিক আয়", "intensity": "তীব্রতা" },
+  "target": { "title": "আয় লক্ষ্য", "earnedSoFar": "এখন পর্যন্ত আয়", "remaining": "বাকি", "perDayNeeded": "আপনাকে প্রায় আয় করতে হবে", "perDay": "প্রতিদিন পরবর্তী", "toHitTarget": "লক্ষ্য পূরণ করতে।", "targetAchieved": "লক্ষ্য পূরণ! দারুণ। নতুন লক্ষ্য নির্ধারণ করুন।" },
+  "emergency": { "title": "জরুরি SOS", "subtitle": "জরুরি সেবা এবং নিরাপত্তা রিপোর্টিং", "sosButton": "SOS — সাহায্যের জন্য ট্যাপ করুন", "sosActivated": "SOS সক্রিয়!", "helplines": "জরুরি হেল্পলাইন", "reportIncident": "ঘটনা রিপোর্ট করুন", "incidentType": "ঘটনার ধরন", "description": "ঘটনা বর্ণনা করুন", "submitReport": "রিপোর্ট জমা দিন", "recentReports": "সাম্প্রতিক রিপোর্ট", "police": "পুলিশ", "ambulance": "অ্যাম্বুলেন্স", "womenHelpline": "মহিলা হেল্পলাইন", "fireStation": "ফায়ার স্টেশন", "roadAccident": "সড়ক দুর্ঘটনা", "childHelpline": "শিশু হেল্পলাইন" },
+  "insurance": { "title": "স্বাস্থ্য বীমা গাইড", "subtitle": "আপনার এবং আপনার পরিবারের সুরক্ষার জন্য সরকারি প্রকল্প", "eligibilityCheck": "যোগ্যতা পরীক্ষা করুন", "monthlyIncome": "আপনার মাসিক আয় (₹)", "youQualify": "আপনি যোগ্য", "schemes": "প্রকল্পের জন্য", "applyNow": "এখনই আবেদন করুন", "coverage": "কভারেজ", "premium": "প্রিমিয়াম", "eligibility": "যোগ্যতা", "allSchemes": "সব প্রকল্প", "health": "স্বাস্থ্য", "life": "জীবন", "accident": "দুর্ঘটনা" },
+  "planner": { "title": "শিফট প্ল্যানার ও টাস্ক", "subtitle": "আপনার শিফট পরিকল্পনা করুন এবং দৈনিক কাজ পরিচালনা করুন", "calendar": "ক্যালেন্ডার", "addShift": "শিফট যোগ করুন", "city": "শহর", "shiftHours": "শিফটের ঘণ্টা", "estimatedEarnings": "আনুমানিক আয়", "taskBoard": "টাস্ক বোর্ড", "addTask": "টাস্ক যোগ করুন", "preShift": "শিফটের আগে", "maintenance": "রক্ষণাবেক্ষণ", "financial": "আর্থিক", "todo": "করতে হবে", "inProgress": "চলছে", "done": "সম্পন্ন", "noShifts": "এই দিনে কোনো শিফট নেই", "noTasks": "এখনো কোনো টাস্ক নেই" },
+  "notifications": { "title": "বিজ্ঞপ্তি", "alerts": "সতর্কতা", "markAllRead": "সব পঠিত করুন", "allCaughtUp": "সব বিজ্ঞপ্তি দেখা হয়েছে!", "welcome": "GigSarthi-তে স্বাগতম", "welcomeMsg": "আপনার AI পূর্বাভাস সক্রিয়। নিরাপদে গাড়ি চালান!", "hydrationTitle": "জল পান করুন 💧", "hydrationMsg": "অনেকক্ষণ হয়ে গেছে। হাইড্রেটেড থাকতে জল পান করুন!", "breakTitle": "বিরতি নিন ☕", "breakMsg": "আপনি আধা শিফটের বেশি সময় ধরে সক্রিয়। ১০ মিনিটের বিরতি মনোযোগ বাড়ায়।", "justNow": "এইমাত্র" }
+}

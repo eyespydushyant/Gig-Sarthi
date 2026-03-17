@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar";
-import { NotificationPanel } from "@/components/features/NotificationPanel";
+import { ClientProviders } from "@/components/ClientProviders";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,9 +25,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Navbar />
-        <NotificationPanel />
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
