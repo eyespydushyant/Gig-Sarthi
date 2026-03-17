@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useGigSarthiLive } from "@/hooks/useGigSarthiLive";
 import { fallbackTrends, DailyTrend } from "@/data/mockData";
@@ -14,7 +14,7 @@ import { QUICK_CITIES } from "@/constants/cities";
 import { IncomeHeatmap } from "@/components/features/IncomeHeatmap";
 import { IncomeTargetTracker } from "@/components/features/IncomeTargetTracker";
 
-export default function Dashboard() {
+function DashboardContent() {
   const { dashboardData, dashboardLoading, error, fetchDashboardData } = useGigSarthiLive();
   const searchParams = useSearchParams();
   const urlCity = searchParams.get("city") || "Delhi";
@@ -184,5 +184,18 @@ export default function Dashboard() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center text-muted-foreground">
+        <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary" />
+        <p>Loading your dashboard...</p>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
