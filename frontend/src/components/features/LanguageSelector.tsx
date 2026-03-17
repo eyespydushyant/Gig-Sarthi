@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe, Check } from "lucide-react";
 import { SUPPORTED_LANGUAGES } from "@/i18n/languages";
@@ -10,14 +10,21 @@ export function LanguageSelector() {
   const { locale, setLocale, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
+  // Show popup on first visit
   useEffect(() => {
     const hasChosen = localStorage.getItem("gigsarthi_lang_chosen");
     if (!hasChosen) {
-      // Show popup on first visit after a short delay
       const timer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(timer);
     }
   }, []);
+
+  // Listen for custom event to reopen (from Navbar globe button)
+  const openSelector = useCallback(() => setIsOpen(true), []);
+  useEffect(() => {
+    window.addEventListener("openLanguageSelector", openSelector);
+    return () => window.removeEventListener("openLanguageSelector", openSelector);
+  }, [openSelector]);
 
   const handleSelect = (code: string) => {
     setLocale(code);
