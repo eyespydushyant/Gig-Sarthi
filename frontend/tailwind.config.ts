@@ -12,29 +12,36 @@ module.exports = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        brand: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+        background: "#0a0c10", // Darker space blue/carbon
+        foreground: "#f8fafc", // Slate 50
+        card: {
+          DEFAULT: "rgba(16, 20, 28, 0.7)", // Deep blue glass
+          foreground: "#f1f5f9",
         },
-        dark: {
-          900: '#0a0a0f',
-          800: '#111118',
-          700: '#1a1a26',
-          600: '#252535',
-          500: '#32324a',
-        }
+        popover: {
+          DEFAULT: "rgba(16, 20, 28, 0.95)",
+          foreground: "#f1f5f9",
+        },
+        primary: {
+          DEFAULT: "#0ea5e9", // Vivid Cerulean/Sky Blue (Stitch main)
+          foreground: "#ffffff",
+        },
+        secondary: {
+          DEFAULT: "#3b82f6", // Royal Blue
+          foreground: "#ffffff",
+        },
+        muted: {
+          DEFAULT: "rgba(30, 41, 59, 0.5)", // Slate muted
+          foreground: "#94a3b8",
+        },
+        accent: {
+          DEFAULT: "#06b6d4", // Cyan accent
+          foreground: "#ffffff",
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'hero-gradient': 'linear-gradient(135deg, #0a0a0f 0%, #1a1a26 50%, #0f0f1a 100%)',
+        'mesh-blue': 'radial-gradient(at 0% 0%, hsla(199,89%,48%,0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, hsla(217,91%,60%,0.15) 0px, transparent 50%)',
       },
       animation: {
         'fade-up': 'fadeUp 0.6s ease-out forwards',

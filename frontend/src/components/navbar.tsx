@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BarChart3, Home, Bike } from "lucide-react";
+import { BarChart3, Home, Bike, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -23,15 +23,14 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all duration-300">
-            <Bike className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-black tracking-tight">
-            <span className="gradient-text">Gig</span>
-            <span className="text-white">Sarthi</span>
-          </span>
-        </Link>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-gradient-blue">
+              GigSarthi
+            </span>
+          </Link>
 
         {/* Nav Links */}
         <div className="flex items-center gap-1">

@@ -1,418 +1,155 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import { motion } from "framer-motion";
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
-} from "recharts";
-import {
-  IndianRupee, Clock, Zap, CloudSun, MapPin, Timer,
-  TrendingUp, TrendingDown, RefreshCw, AlertCircle
-} from "lucide-react";
-import { Navbar } from "@/components/navbar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useGigSarthiLive } from "@/hooks/useGigSarthiLive";
+import { fallbackTrends, DailyTrend } from "@/data/mockData";
+import { DashboardGrid } from "@/components/features/DashboardGrid";
+import { DemandGauge } from "@/components/features/DemandGauge";
+import { InsightCard } from "@/components/features/InsightCard";
 import { Button } from "@/components/ui/button";
-import {
-  formatCurrency, getDemandColor, getDemandBg, getWeatherEmoji, cn
-} from "@/lib/utils";
+import { RefreshCw, TrendingUp, Clock, CloudSun, Loader2 } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
-const INDIAN_CITIES = [
-  "Delhi", "Mumbai", "Bangalore", "Hyderabad", "Chennai",
-  "Kolkata", "Pune", "Jaipur", "Ahmedabad", "Lucknow",
-];
+export default function Dashboard() {
+  const { dashboardData, dashboardLoading, error, fetchDashboardData } = useGigSarthiLive();
+  const searchParams = useSearchParams();
+  const urlCity = searchParams.get("city") || "Delhi";
+  const urlHours = searchParams.get("hours") || "8";
 
-interface DashboardData {
-  predicted_earnings: number;
-  demand_level: string;
-  demand_score: number;
-  best_time: string;
-  reason: string;
-  tips: string[];
-  weather: {
-    condition: string;
-    description: string;
-    temperature: number;
-    humidity: number;
-  };
-  holiday: { is_holiday: boolean; holiday_name: string | null };
-  traffic_level: string;
-  city: string;
-  hours_worked: number;
-  earnings_trend: { day: string; earnings: number }[];
-}
+  // Load data based on URL parameters or fallback
+  useEffect(() => {
+    fetchDashboardData(urlCity, urlHours);
+  }, [fetchDashboardData, urlCity, urlHours]);
 
-// ----- Stat Card -----
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  sub,
-  accent = "orange",
-  delay = 0,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: "orange" | "blue" | "green" | "purple";
-  delay?: number;
-}) {
-  const accentClasses = {
-    orange: "text-orange-400 bg-orange-500/10 border-orange-500/20",
-    blue: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-    green: "text-green-400 bg-green-500/10 border-green-500/20",
-    purple: "text-purple-400 bg-purple-500/10 border-purple-500/20",
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-    >
-      <Card className="hover:scale-[1.02] transition-transform duration-200 cursor-default">
-        <CardContent className="pt-2">
-          <div className={cn("inline-flex p-2.5 rounded-xl border mb-4", accentClasses[accent])}>
-            <Icon className="w-5 h-5" />
-          </div>
-          <p className="text-white/40 text-xs uppercase tracking-wider mb-1">{label}</p>
-          <p className="text-2xl font-bold text-white">{value}</p>
-          {sub && <p className="text-white/40 text-xs mt-1">{sub}</p>}
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-}
-
-// ----- Custom Tooltip -----
-function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: {value: number}[]; label?: string }) {
-  if (active && payload && payload.length) {
+  if (error) {
     return (
-      <div className="px-3 py-2 rounded-xl bg-gray-900 border border-white/10 text-sm">
-        <p className="text-white/50 mb-1">{label}</p>
-        <p className="text-orange-400 font-bold">{formatCurrency(payload[0].value)}</p>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 text-center">
+        <h2 className="text-2xl font-bold text-red-500 mb-2">Error Loading Dashboard</h2>
+        <p className="text-muted-foreground mb-6">{error}</p>
+        <Button onClick={() => fetchDashboardData(urlCity, urlHours)} variant="outline" className="gap-2">
+          <RefreshCw className="w-4 h-4" /> Try Again
+        </Button>
       </div>
     );
   }
-  return null;
-}
 
-// ----- Loading Skeleton -----
-function SkeletonCard() {
-  return (
-    <Card>
-      <CardContent className="pt-2 space-y-3">
-        <div className="w-10 h-10 rounded-xl shimmer" />
-        <div className="w-20 h-3 rounded shimmer" />
-        <div className="w-28 h-6 rounded shimmer" />
-      </CardContent>
-    </Card>
-  );
-}
-
-// ----- Main Dashboard -----
-export default function DashboardPage() {
-  const [city, setCity] = useState("Delhi");
-  const [hours, setHours] = useState("6");
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-
-  const fetchDashboard = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get(
-        `/api/dashboard?city=${encodeURIComponent(city)}&hours_worked=${hours}`
-      );
-      setData(res.data);
-      setLastUpdated(new Date().toLocaleTimeString("en-IN"));
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load dashboard. Make sure the backend is running on port 5000."
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [city, hours]);
-
-  useEffect(() => {
-    fetchDashboard();
-  }, [fetchDashboard]);
+  // Handle missing data states smoothly
+  const earnings = dashboardData?.predicted_earnings || 0;
+  const bestTime = dashboardData?.best_time || "Calculating...";
+  const demandLevel = dashboardData?.demand_level || "Moderate";
+  const demandScore = dashboardData?.demand_score || 5;
+  const weatherCond = dashboardData?.weather?.condition || "Clear";
+  const weatherTemp = dashboardData?.weather?.temperature ? `${dashboardData.weather.temperature}°C` : "--°C";
+  const trends = dashboardData?.earnings_trend || fallbackTrends;
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <main className="min-h-screen pb-20 relative bg-background">
+      {/* Blue mesh background */}
+      <div className="fixed inset-0 min-h-screen w-full -z-10 bg-mesh-blue pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"
-        >
-          <div>
-            <h1 className="text-3xl font-black text-white">
-              <span className="gradient-text">Dashboard</span>
-            </h1>
-            <p className="text-white/40 text-sm mt-1">
-              AI-powered earnings and demand insights
-              {lastUpdated && (
-                <span className="ml-2 text-white/30">· Updated {lastUpdated}</span>
-              )}
-            </p>
+      {dashboardLoading ? (
+        <div className="flex w-full h-[60vh] items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Syncing live logistics data...</p>
           </div>
-
-          {/* Controls */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-orange-500/50 focus:outline-none appearance-none cursor-pointer"
-            >
-              {INDIAN_CITIES.map((c) => (
-                <option key={c} value={c} className="bg-gray-900">{c}</option>
-              ))}
-            </select>
-            <input
-              type="number"
-              value={hours}
-              onChange={(e) => setHours(e.target.value)}
-              min="1" max="16" step="0.5"
-              placeholder="Hours"
-              className="h-9 w-24 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-orange-500/50 focus:outline-none"
-            />
-            <Button
-              variant="glow"
-              size="sm"
-              onClick={fetchDashboard}
-              loading={loading}
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Error */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm mb-6"
-          >
-            <AlertCircle className="w-5 h-5 shrink-0" />
-            {error}
-          </motion.div>
-        )}
-
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {loading && !data ? (
-            <>
-              <SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard />
-            </>
-          ) : data ? (
-            <>
-              <StatCard
-                icon={IndianRupee}
-                label="Predicted Earnings"
-                value={formatCurrency(data.predicted_earnings)}
-                sub={`For ${data.hours_worked}h in ${data.city}`}
-                accent="orange"
-                delay={0}
-              />
-              <StatCard
-                icon={Clock}
-                label="Best Work Time"
-                value={data.best_time}
-                sub="Today's recommendation"
-                accent="blue"
-                delay={0.1}
-              />
-              <StatCard
-                icon={Zap}
-                label="Demand Level"
-                value={data.demand_level}
-                sub={`Score: ${data.demand_score}/10`}
-                accent={
-                  data.demand_level === "Very High" || data.demand_level === "High"
-                    ? "orange"
-                    : data.demand_level === "Moderate"
-                    ? "purple"
-                    : "green"
-                }
-                delay={0.2}
-              />
-              <StatCard
-                icon={CloudSun}
-                label="Weather"
-                value={`${getWeatherEmoji(data.weather?.condition)} ${data.weather?.condition || "N/A"}`}
-                sub={`${data.weather?.temperature || "--"}°C · ${data.weather?.humidity || "--"}% humidity`}
-                accent="green"
-                delay={0.3}
-              />
-            </>
-          ) : null}
         </div>
-
-        {/* Charts + Details row */}
-        {data && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Earnings Trend Chart */}
-            <motion.div
-              className="lg:col-span-2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-orange-400" />
-                    7-Day Earnings Trend
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={data.earnings_trend} barSize={28}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                      <XAxis
-                        dataKey="day"
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={(v) => `₹${v}`}
-                        width={55}
-                      />
-                      <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-                      <Bar dataKey="earnings" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
-                      <defs>
-                        <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#f97316" stopOpacity={0.9} />
-                          <stop offset="100%" stopColor="#f97316" stopOpacity={0.3} />
-                        </linearGradient>
-                      </defs>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Demand Gauge + Details */}
-            <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              {/* Demand meter */}
-              <Card className={cn("border", getDemandBg(data.demand_level))}>
-                <CardHeader>
-                  <CardTitle className={cn("flex items-center gap-2", getDemandColor(data.demand_level))}>
-                    <Zap className="w-5 h-5" /> Live Demand
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className={cn("text-4xl font-black mb-3", getDemandColor(data.demand_level))}>
-                    {data.demand_score}/10
-                  </div>
-                  <div className="space-y-1.5 mb-4">
-                    {[10, 8, 6, 4, 2].map((mark) => (
-                      <div key={mark} className="flex items-center gap-2">
-                        <div className="w-6 text-xs text-white/30 text-right">{mark}</div>
-                        <div className="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: data.demand_score >= mark ? "100%" : "0%" }}
-                            transition={{ duration: 0.6, delay: 0.1 * (10 - mark) / 2 }}
-                            className={cn(
-                              "h-full rounded-full",
-                              data.demand_score >= 8 ? "bg-red-400" :
-                              data.demand_score >= 6 ? "bg-orange-400" :
-                              data.demand_score >= 4 ? "bg-yellow-400" : "bg-green-400"
-                            )}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-white/50 text-xs">{data.reason}</p>
-                </CardContent>
-              </Card>
-
-              {/* Conditions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm text-white/70 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-orange-400" /> Conditions · {data.city}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm">
-                  <div className="flex justify-between text-white/60">
-                    <span className="flex items-center gap-1.5"><Timer className="w-3.5 h-3.5" /> Traffic</span>
-                    <span className="text-white capitalize">{data.traffic_level}</span>
-                  </div>
-                  <div className="flex justify-between text-white/60">
-                    <span className="flex items-center gap-1.5">
-                      {data.demand_score >= 6
-                        ? <TrendingUp className="w-3.5 h-3.5 text-green-400" />
-                        : <TrendingDown className="w-3.5 h-3.5 text-red-400" />
-                      } Trend
-                    </span>
-                    <span className={data.demand_score >= 6 ? "text-green-400" : "text-red-400"}>
-                      {data.demand_score >= 6 ? "Bullish" : "Bearish"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-white/60">
-                    <span>Holiday</span>
-                    <span className={data.holiday?.is_holiday ? "text-yellow-400" : "text-white/40"}>
-                      {data.holiday?.is_holiday ? `✓ ${data.holiday.holiday_name}` : "None"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+      ) : (
+        <DashboardGrid 
+          title="Analytics Dashboard" 
+          subtitle={`Live conditions for ${dashboardData?.city || urlCity}`}
+          action={
+            <Button onClick={() => fetchDashboardData(dashboardData?.city || urlCity, urlHours)} variant="outline" className="gap-2 bg-background/50 backdrop-blur-sm border-white/10 hover:bg-white/5">
+              <RefreshCw className="w-4 h-4" /> Refresh Sync
+            </Button>
+          }
+        >
+          {/* Top Row: Stat Cards */}
+          <InsightCard 
+            title="Est. Daily Earnings" 
+            color="primary"
+            icon={<TrendingUp className="w-5 h-5 text-primary" />}
+            value={<div className="text-3xl font-bold mt-2">₹{earnings}</div>}
+            description="Projected for an 8-hour shift today."
+          />
+          
+          <InsightCard 
+            title="Best Work Time" 
+            color="secondary"
+            icon={<Clock className="w-5 h-5 text-secondary" />}
+            value={<div className="text-2xl font-bold mt-2">{bestTime}</div>}
+            description={dashboardData?.reason || "Based on historical routing."}
+          />
+          
+          <InsightCard 
+            title="Weather Impact" 
+            color="default"
+            icon={<CloudSun className="w-5 h-5 text-foreground" />}
+            value={<div className="text-3xl font-bold mt-2">{weatherTemp}</div>}
+            description={`${weatherCond}. ${dashboardData?.weather?.description || ""}`}
+          />
+          
+          <div className="md:col-span-1">
+             <DemandGauge score={demandScore} level={demandLevel as any} explanation={dashboardData?.reason} />
           </div>
-        )}
 
-        {/* Tips */}
-        {data?.tips && data.tips.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-6"
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-white/80">💡 AI Tips for Today</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-3">
-                  {data.tips.map((tip, i) => (
-                    <div
-                      key={i}
-                      className="px-4 py-2 rounded-xl bg-orange-500/8 border border-orange-500/15 text-orange-200/70 text-sm"
-                    >
-                      {tip}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </div>
-    </div>
+          {/* Bottom Row: Charts & Tips */}
+          <div className="md:col-span-3 h-[400px] glass-panel rounded-xl border-white/10 p-6 flex flex-col">
+            <h3 className="text-lg font-medium text-foreground mb-6">7-Day Earnings Trend</h3>
+            <div className="flex-1 w-full relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                    tickFormatter={(val) => `₹${val}`}
+                  />
+                  <Tooltip 
+                    cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(16, 20, 28, 0.9)', 
+                      borderColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    itemStyle={{ color: '#0ea5e9', fontWeight: 'bold' }}
+                    formatter={(val: number) => [`₹${val}`, 'Earnings']}
+                  />
+                  <Bar dataKey="earnings" radius={[4, 4, 0, 0]}>
+                    {trends.map((entry: DailyTrend, index: number) => (
+                      <Cell key={`cell-${index}`} fill={index === trends.length - 1 ? '#0ea5e9' : 'rgba(14, 165, 233, 0.3)'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* AI Tips Panel */}
+          <div className="md:col-span-1 glass-panel rounded-xl border-white/10 p-6 flex flex-col bg-gradient-to-b from-primary/10 to-transparent">
+             <h3 className="text-lg font-medium text-primary mb-4 flex items-center gap-2">
+               ✨ Sarthi Tips
+             </h3>
+             <ul className="space-y-4">
+                {dashboardData?.tips?.map((tip: string, i: number) => (
+                  <li key={i} className="text-sm text-muted-foreground/90 flex items-start gap-2 border-b border-primary/10 pb-3 last:border-0">
+                    <span className="text-primary mt-0.5">•</span> {tip}
+                  </li>
+                ))}
+             </ul>
+          </div>
+        </DashboardGrid>
+      )}
+    </main>
   );
 }

@@ -14,24 +14,25 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 const AI_ENGINE_URL = process.env.AI_ENGINE_URL || "http://localhost:8000";
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const CALENDARIFIC_API_KEY = process.env.CALENDARIFIC_API_KEY;
 
-// --- Helper: Fetch Weather from OpenWeatherMap ---
+// --- Helper: Fetch Weather from WeatherAPI.com ---
 async function getWeather(city) {
   try {
-    if (!OPENWEATHER_API_KEY) {
-      console.log("⚠️  No OpenWeather API key. Using fallback weather data.");
+    if (!WEATHER_API_KEY) {
+      console.log("⚠️  No WeatherAPI key. Using fallback weather data.");
       return { main: "Clear", description: "clear sky", temp: 30, humidity: 50 };
     }
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)},IN&appid=${OPENWEATHER_API_KEY}&units=metric`;
+    // Force country to India to prevent WeatherAPI from guessing Ontario/US cities
+    const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(city + " India")}`;
     const res = await axios.get(url);
     const data = res.data;
     return {
-      main: data.weather[0].main,
-      description: data.weather[0].description,
-      temp: data.main.temp,
-      humidity: data.main.humidity,
+      main: data.current.condition.text,
+      description: data.current.condition.text,
+      temp: data.current.temp_c,
+      humidity: data.current.humidity,
     };
   } catch (err) {
     console.error("Weather API error:", err.message);
@@ -292,6 +293,6 @@ app.get("/api/dashboard", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 GigSarthi Backend running on http://localhost:${PORT}`);
   console.log(`🤖 AI Engine URL: ${AI_ENGINE_URL}`);
-  console.log(`🌤️  Weather API: ${OPENWEATHER_API_KEY ? "Configured" : "Not configured (using fallback)"}`);
+  console.log(`🌤️  Weather API: ${WEATHER_API_KEY ? "Configured" : "Not configured (using fallback)"}`);
   console.log(`📅 Holiday API: ${CALENDARIFIC_API_KEY ? "Configured" : "Not configured (using fallback)"}`);
 });
