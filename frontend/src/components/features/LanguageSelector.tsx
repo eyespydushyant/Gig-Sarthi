@@ -28,6 +28,7 @@ export function LanguageSelector() {
 
   const handleSelect = (code: string) => {
     setLocale(code);
+    localStorage.setItem("gigsarthi_lang_chosen", "true");
     setIsOpen(false);
   };
 
