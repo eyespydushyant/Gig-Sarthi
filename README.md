@@ -21,21 +21,24 @@ GigSarthi is a comprehensive, AI-powered platform designed to empower gig econom
 ### Live Notifications Panel
 - Global slide-in panel that delivers timely health alerts (e.g., hydration reminders, break suggestions) to keep gig workers safe and focused.
 
-### Emergency SOS Section *(Upcoming)*
+### Emergency SOS Section
 - One-tap SOS button for reporting safety incidents.
 - Incident type selector: Accident, Harassment, Medical, Theft.
 - National helpline numbers (Police: 100, Ambulance: 112, Women: 1091).
 
-### Health Insurance Guide *(Upcoming)*
+### Health Insurance Guide
 - Curated government scheme cards: PM-JAY, ESIC, PMSBY, PMJJBY.
 - Eligibility calculator based on monthly income.
 - Direct links to official government portals.
 
-### Shift Planner & Task Manager *(Upcoming)*
+### Shift Planner & Task Manager
 - Monthly calendar view for scheduling shifts.
 - AI-estimated earnings preview per planned shift.
 - Kanban-style task board: Pre-shift, Maintenance, Financial.
 - Full `localStorage` persistence.
+
+### Multi-Language Support
+- Seamlessly switch between English, Hindi, Marathi, Bengali, Kannada, Telugu, Tamil, and Malayalam to access the app in your preferred language.
 
 ---
 
