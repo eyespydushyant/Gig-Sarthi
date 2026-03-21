@@ -120,4 +120,4 @@ Delhi, Mumbai, Bangalore, Hyderabad, Chennai, Pune, Kolkata, Jaipur, Ahmedabad, 
 
 ## 🤝 Contributing
 
-Open an issue or submit a pull request to help extend GigSarthi's features!
+Open an issue or submit a pull request to help extend GigSarthi's features! .
