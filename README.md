@@ -113,7 +113,7 @@ This starts all three services concurrently:
 
 Delhi, Mumbai, Bangalore, Hyderabad, Chennai, Pune, Kolkata, Jaipur, Ahmedabad, Lucknow, Surat, Bhopal, Nagpur, Indore, Vadodara, Chandigarh, Coimbatore, Kochi, Visakhapatnam, Patna, and more.
 
-## 🔒 Security
+## 🔒 Security-
 
 - **Never commit `.env` files** — the `.gitignore` protects all key files.
 - See `.env.example` for the required variable names.
