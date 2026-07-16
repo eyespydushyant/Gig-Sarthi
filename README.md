@@ -1,5 +1,6 @@
 # GigSarthi – AI Assistant for Gig Workers
 
+
 GigSarthi is a comprehensive, AI-powered platform designed to empower gig economy workers (delivery partners, ride-share drivers) in India. By predicting daily earnings, recommending optimal work hours, broadcasting real-time demand alerts, and providing safety, insurance, and planning tools — GigSarthi helps workers systematically maximize their income and wellbeing.
 
 ## 🚀   Features
